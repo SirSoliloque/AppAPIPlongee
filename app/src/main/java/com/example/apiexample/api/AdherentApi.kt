@@ -1,7 +1,12 @@
 package com.example.apiexample.api
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,16 +18,16 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 public interface AdherentApi {
-    @GET("/adherent")
-    fun getAdherents(): List<AdherentModel>
+    @GET("adherents")
+    fun getAdherents(): Call<List<AdherentModel>>
 
-    @GET("/adherent/{id}")
+    @GET("adherents/{id}")
     fun getAdherent(@Path("id") id: Int): Call<AdherentModel>
 
-    @PUT("/adherent/{id}")
+    @PUT("adherents/{id}")
     fun putAdherent(@Path("id") id: Int, @Body adherent: AdherentModel): Call<Unit>
 
-    @POST("/adherent")
+    @POST("adherents")
     fun postAdherent(@Body adherent: AdherentModel): Call<AdherentModel>
 }
 
@@ -37,16 +42,30 @@ class ApiClient {
             .build()
     }
 
+    fun getAdherents(adherentList: MutableState<MutableList<AdherentModel>>){
+        val apiService = retrofit.create(AdherentApi::class.java)
+        val call = apiService.getAdherents()
+        Log.println(Log.INFO,"main","ici")
+        val response = call.execute();
+        if(response.isSuccessful){
+            adherentList.value= response.body()?.toMutableList()!!
+        }else{
 
+            Log.e("Main","Error on getAdherent request"+ (response.errorBody()?.string() ))
+        }
+    }
 
-    fun getAdherent(id: Int): AdherentModel {
+    fun getAdherent(id: Int, adherent: MutableState<AdherentModel>) {
+
         val apiService = retrofit.create(AdherentApi::class.java)
         val call = apiService.getAdherent(id)
-        val response = call.execute()
-        return if (response.isSuccessful) {
-            response.body()!!
-        } else {
-            throw Exception("Error fetching adherent")
+        Log.println(Log.INFO,"main","ici")
+        val response = call.execute();
+        if(response.isSuccessful){
+            adherent.value= response.body()!!
+        }else{
+
+            Log.e("Main","Error on getAdherent request"+ (response.message() ))
         }
     }
 
