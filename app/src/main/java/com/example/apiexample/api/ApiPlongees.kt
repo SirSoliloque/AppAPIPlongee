@@ -37,14 +37,15 @@ class PlongeeClient {
             .build()
     }
 
-    fun getPlongees(plongeeList: MutableState<MutableList<PlongeeModel>>){
+    fun getPlongees() : List<PlongeeModel>?{
         val apiService = retrofit.create(PlongeeApi::class.java)
         val call = apiService.getPlongees()
         val response = call.execute();
         if(response.isSuccessful){
-            plongeeList.value= response.body()?.toMutableList()!!
+            return response.body()
         }else{
             Log.e("Main","Error on getPlongees request"+ (response.errorBody()?.string() ))
+            return null
         }
     }
 

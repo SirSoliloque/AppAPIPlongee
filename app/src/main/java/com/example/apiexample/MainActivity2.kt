@@ -27,16 +27,42 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.apiexample.api.AdherentModel
 import com.example.apiexample.api.ApiClient
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import com.example.apiexample.api.PlongeeClient
+import com.example.apiexample.api.PlongeeModel
 
 
 class MainActivity2 : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var plongeesclient: PlongeeClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        plongeesclient = PlongeeClient()
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = setContentView(R.layout.listeplongees)
+        setContentView(R.layout.listeplongees)
+
+        val plongees: List<PlongeeModel>? = plongeesclient.getPlongees();
+
+        var liste = emptyArray<String>()
+
+        if (plongees != null) {
+            for(plongee in plongees){
+                liste.set(plongee.id, plongee.date.toString() + plongee.moment.toString())
+            }
+        }
+
+        val listeplongees = findViewById<ListView>(R.id.listView)
+
+        val arrayAdapter: ArrayAdapter<String> = ArrayAdapter(
+             this, android.R.layout.simple_list_item_1, liste
+        )
+
+        listeplongees.adapter = arrayAdapter
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
