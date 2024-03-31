@@ -107,6 +107,18 @@ fun MainScreen() {
                                     modifier = Modifier.fillMaxWidth(1f/2),
                                     value = adherent.value.email,
                                     onValueChange = { change -> adherent.value.email = change })
+                                TextField(
+                                    modifier = Modifier.fillMaxWidth(1f/4),
+                                    value = adherent.value.forfait,
+                                    onValueChange = { change -> adherent.value.forfait = change })
+                                TextField(
+                                    modifier = Modifier.fillMaxWidth(1f/3),
+                                    value = adherent.value.dateCertificatMedical,
+                                    onValueChange = { change -> adherent.value.dateCertificatMedical =   change })
+                                TextField(
+                                    modifier = Modifier.fillMaxWidth(1f/2),
+                                    value = adherent.value.niveau.toString() ,
+                                    onValueChange = { change -> adherent.value.niveau = change.toInt() })
                             }
                             Button( onClick = { ApiClient().putAdherent(adherent.value) }) {
                                 Text(text = "change")
