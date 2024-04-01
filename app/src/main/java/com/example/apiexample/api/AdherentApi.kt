@@ -2,17 +2,11 @@ package com.example.apiexample.api
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -42,13 +36,13 @@ class ApiClient {
             .build()
     }
 
-    fun getAdherents(adherentList: MutableState<MutableList<AdherentModel>>){
+    fun getAdherents(adherentList: MutableList<AdherentModel>){
         val apiService = retrofit.create(AdherentApi::class.java)
         val call = apiService.getAdherents()
         Log.println(Log.INFO,"main","ici")
         val response = call.execute();
         if(response.isSuccessful){
-            adherentList.value= response.body()?.toMutableList()!!
+            adherentList.addAll(response.body()?.toMutableList()!!)
         }else{
 
             Log.e("Main","Error on getAdherent request"+ (response.errorBody()?.string() ))
