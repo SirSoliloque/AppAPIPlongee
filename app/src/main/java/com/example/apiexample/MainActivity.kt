@@ -67,17 +67,22 @@ fun MainScreen() {
             val choix = remember {
                 mutableStateOf(false)
             }
+            val nouveau = remember {
+                mutableStateOf(true)
+            }
             Column {
                 Row {
                     Button(modifier = Modifier.padding(pad) ,onClick = { Thread {
                         ApiClient().getAdherents(adherents)
                         choix.value = true
+                        nouveau.value = false
                     }.start()}) {
                         Text(text = "Choisir un adherent")
                     }
                     Button(modifier = Modifier.padding(pad) ,onClick = {
                         adherentChoosen.value = AdherentModel()
-                        choix.value = false }) {
+                        choix.value = false
+                        nouveau.value = true}) {
                         Text( text = "creer un adherent")
                     }
                 }
@@ -94,7 +99,8 @@ fun MainScreen() {
                                     .padding(1.dp)
                                     .background(Color.Cyan)){
                                     Button(onClick = { adherentChoosen.value = adherent.value
-                                        choix.value = false }) {
+                                        choix.value = false
+                                    }) {
                                         Text(text = adherent.value.id.toString().orEmpty()+" ")
                                         Text(text = adherent.value.nom.toString().orEmpty()+" ")
                                         Text(text = adherent.value.prenom.toString().orEmpty()+" ")
@@ -106,7 +112,7 @@ fun MainScreen() {
                 }
                 else{
                     Surface(modifier = Modifier.padding(pad)) {
-                        AdherentCard(adherent = adherentChoosen)
+                        AdherentCard(adherent = adherentChoosen,nouveau.value)
                     }
                 }
             }
@@ -146,12 +152,12 @@ fun AdherentCard(adherent : MutableState<AdherentModel>,newAdherent : Boolean = 
                 onValueChange = { change -> adherent.value= adherent.value.copy(niveau = change.toInt()) })
         }
         if(newAdherent){
-            Button(onClick = { ApiClient().postAdherent(adherent.value) }) {
+            Button(onClick = { Thread{ ApiClient().postAdherent(adherent.value)}.start() }) {
                 Text(text = "creer")
             }
         }
         else{
-            Button( onClick = { ApiClient().putAdherent(adherent.value) }) {
+            Button( onClick = { Thread{ ApiClient().putAdherent(adherent.value)}.start() }) {
                 Text(text = "changer")
             }
         }

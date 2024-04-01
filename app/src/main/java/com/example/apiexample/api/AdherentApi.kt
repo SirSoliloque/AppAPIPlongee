@@ -42,6 +42,7 @@ class ApiClient {
         Log.println(Log.INFO,"main","ici")
         val response = call.execute();
         if(response.isSuccessful){
+            adherentList.clear()
             adherentList.addAll(response.body()?.toMutableList()!!)
         }else{
 
